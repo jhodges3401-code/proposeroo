@@ -1,0 +1,71 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Proposeroo — Pay-once Quote & Proposal Maker</title><link rel="stylesheet" href="style.css"></head><body>
+<header class="ui"><b>Proposeroo</b> <span class="tag">Quotes & proposals · your data stays in this browser</span>
+<span id="floorBadge" class="badge">–</span>
+<span class="grow"></span>
+<select id="quotePick" aria-label="Saved quotes"></select>
+<button id="newQ">New</button><button id="dupQ">Duplicate</button><button id="delQ">Delete</button>
+<button id="printBtn" class="primary">Export PDF</button></header>
+<main class="ui-wrap">
+<section class="ui editor">
+<nav class="tabs"><button data-tab="quote" class="on">Quote</button><button data-tab="text">Proposal text</button><button data-tab="library">Library</button><button data-tab="settings">Settings</button></nav>
+<div id="tab-quote" class="tab">
+ <fieldset><legend>Client & project</legend>
+  <label>Quote # <input data-f="number"></label><label>Client name <input data-f="client.name"></label>
+  <label>Company <input data-f="client.company"></label><label>Client email <input data-f="client.email"></label>
+  <label class="wide">Project <input data-f="project"></label>
+  <label>Issue date <input type="date" data-f="issueDate"></label><label>Valid until <input type="date" data-f="validUntil"></label>
+  <label>Template <select data-f="template"><option value="clean">Clean</option><option value="bold">Bold</option></select></label>
+ </fieldset>
+ <fieldset><legend>Line items</legend><table class="items"><thead><tr><th>Item</th><th>Qty</th><th>Unit</th><th>Price</th><th>My rate</th><th>Optional</th><th></th></tr></thead><tbody id="items"></tbody></table>
+  <button id="addItem">+ Add item</button> <select id="addSvc"><option value="">+ From library…</option></select></fieldset>
+ <fieldset><legend>Adjustments</legend>
+  <label>Contingency % <input type="number" data-f="adjust.contingencyPct" data-pct></label>
+  <label>Rush % <input type="number" data-f="adjust.rushPct" data-pct></label>
+  <label>Pass-through expenses <input type="number" data-f="adjust.expenses"></label>
+  <label>Discount % <input type="number" data-f="adjust.discountPct" data-pct></label>
+  <label>Tax % <input type="number" data-f="adjust.taxPct" data-pct></label>
+  <label>Deposit % <input type="number" data-f="adjust.depositPct" data-pct></label></fieldset>
+ <fieldset><legend>Rate floor (60-second setup)</legend>
+  <label>Preset <select id="preset"></select></label>
+  <label>Take-home goal <input type="number" data-r="takeHome"></label><label>Tax rate % <input type="number" data-r="taxRate" data-pct></label>
+  <label>Buffer % <input type="number" data-r="buffer" data-pct></label><label>Work weeks <input type="number" data-r="weeks"></label>
+  <label>Days / week <input type="number" data-r="daysPerWeek"></label><label>Hours / day <input type="number" data-r="hoursPerDay"></label>
+  <label>Utilization % <input type="number" data-r="utilization" data-pct></label><label>Annual overhead <input type="number" data-r="overhead"></label>
+  <p id="rateOut" class="note"></p></fieldset>
+</div>
+<div id="tab-text" class="tab" hidden>
+ <label class="wide">Intro <textarea data-f="sections.intro" rows="3"></textarea></label>
+ <label class="wide">Scope <textarea data-f="sections.scope" rows="3"></textarea></label>
+ <label class="wide">Deliverables (one per line) <textarea id="deliv" rows="3"></textarea></label>
+ <label class="wide">Timeline <textarea data-f="sections.timeline" rows="2"></textarea></label>
+ <label class="wide">Terms <textarea data-f="sections.terms" rows="4"></textarea></label>
+ <label class="wide">How to accept <textarea data-f="sections.acceptance" rows="2"></textarea></label>
+</div>
+<div id="tab-library" class="tab" hidden>
+ <h3>Saved services</h3><ul id="svcList"></ul>
+ <p><input id="svcName" placeholder="Service name"> <input id="svcQty" type="number" placeholder="Qty" style="width:5em">
+ <select id="svcUnit"><option>hour</option><option>flat</option><option>item</option></select>
+ <input id="svcPrice" type="number" placeholder="Price (blank = my rate)" style="width:11em"> <button id="svcAdd">Save service</button></p>
+ <h3>Saved quotes</h3><ul id="qList"></ul>
+</div>
+<div id="tab-settings" class="tab" hidden>
+ <fieldset><legend>Your business</legend>
+  <label>Business name <input data-p="businessName"></label><label>Email <input data-p="email"></label>
+  <label class="wide">Address <input data-p="address"></label>
+  <label>Logo <input type="file" id="logo" accept="image/*"></label><label>Accent color <input type="color" data-p="accent"></label>
+  <label>Currency <select data-p="currency"><option>USD</option><option>EUR</option><option>GBP</option><option>CAD</option><option>AUD</option></select></label>
+  <label>Locale <select data-p="locale"><option>en-US</option><option>en-GB</option><option>de-DE</option><option>fr-FR</option><option>en-CA</option><option>en-AU</option></select></label></fieldset>
+ <fieldset><legend>Backup</legend><button id="exportJson">Download backup (.json)</button> <label class="btnlike">Restore backup <input type="file" id="importJson" accept="application/json" hidden></label></fieldset>
+ <fieldset id="proBox"><legend>Proposeroo Pro</legend>
+  <p id="proState"></p>
+  <p>Pro removes the watermark and unlocks unlimited saved quotes. Pay once: <a id="proSingle" target="_blank" rel="noopener">$12 single license</a> · <a id="proTeam" target="_blank" rel="noopener">$49 team of 5</a></p>
+  <input id="unlockCode" placeholder="Unlock code from your receipt"> <button id="unlockBtn">Unlock</button> <span id="unlockMsg"></span></fieldset>
+ <p class="note">Planning tool only. Not tax, legal, accounting, or financial advice. Proposeroo does not provide e-signatures or payments.</p>
+</div>
+</section>
+<section class="previewWrap"><div id="doc" class="doc"></div></section>
+</main>
+<dialog id="upsell"><p><b>Free plan saves 1 quote.</b> Unlock Pro to save unlimited quotes and remove the watermark.</p>
+<p><a class="proLink" target="_blank" rel="noopener">Get Pro ($12, pay once)</a></p><button id="closeUpsell">Not now</button> <button id="goUnlock">I have a code</button></dialog>
+<script type="module" src="app.js"></script></body></html>
